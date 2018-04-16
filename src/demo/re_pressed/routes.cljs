@@ -32,12 +32,12 @@
                      [{:which 13}]]
 
                     [[::events/card-move-down]
-                     ;; down arrow and s
+                     ;; down arrow or s
                      [{:which 40}]
                      [{:which 83}]]
 
                     [[::events/card-move-up]
-                     ;; up arrow and w
+                     ;; up arrow or w
                      [{:which 38}]
                      [{:which 87}]]
                     ]
