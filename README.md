@@ -1,85 +1,105 @@
 # re-pressed
 
+> **Arthur**: Shut up, will you, SHUT UP!
+> **Man**:	Aha!  Now we see the violence inherent in the system!
+> **Arthur**: SHUT UP!
+> **Man**:	Come and see the violence inherent in the system!	HELP, HELP, I'M BEING REPRESSED!
+> **Arthur**: Bloody PEASANT!
+> **Man**:	Oh, what a giveaway!  Did'j'hear that, did'j'hear that, eh?  That's what I'm all about!  Did you see 'im repressing me?  You saw it, didn't you?!
+> - Monty Python and the Holy Grail
+
 Re-pressed is a library that handles keyboard events
 for [re-frame](https://github.com/Day8/re-frame) applications.
-
-**Note**: For now, this library should be considered *alpha quality*.
-
-![re-pressed gif not found](re-pressed.gif)
-
-## Usage
-
-Create a new re-frame application.
-
-```
-lein new re-frame foo
-```
-
-Add the following to the `:dependencies` vector of your *project.clj*
-file.
 
 ```clojure
 [re-pressed "0.1.0-alpha"]
 ```
 
-### The `::rp/add-keyboard-event-listener` event
+**Note**: For now, this library should be considered *alpha quality*.
 
-Then require re-pressed in the core namespace, and add the
-`::rp/add-keyboard-event-listener` event.
+![re-pressed gif not found](re-pressed.gif)
+
+# The Problem
+
+If you aren't careful, it is easy to add a bunch of keyboard event
+listeners scattered throughout your application. When these listeners
+collide, this can lead to unexpected and hard to debug behavior.
+
+In addition, the current state of how to identify a keyboard event in
+a cross-browser compatible way can be quite cumbersome ... you will
+likely be asking yourself, "Should I use keyCode, key, which, etc?".
+
+# Re-pressed's Solution
+
+With re-pressed, you only set up one keyboard event listener when your
+application starts, with `::rp/add-keyboard-event-listener`. However,
+that does not mean that you are locked in to one set of rules for how
+to handle keyboard events. By dispatching `::rp/set-keydown-event`,
+`::rp/set-keypress-event`, or `::rp/set-keyup-event`, you can update
+the rules dynamically.
+
+In addition, jQuery is able to ensure cross-browser compatibility with
+their `which` attribute. Re-pressed trusts that jQuery will do a good
+job at keeping this current and uses it under the hood.
+
+# API
+
+### `::rp/add-keyboard-event-listener`
+
+`::rp/add-keyboard-event-listener` adds the keyboard event listener to
+your application. Needs to be dispatched **only once**, when the
+application *first* loads.
+
+There are three options, and you can use more than one if you'd like:
 
 ```clojure
-(ns foo.core
-  (:require [reagent.core :as reagent]
-            [re-frame.core :as re-frame]
-			
-            ;; Add this (1 of 2)
-            [re-pressed.core :as rp]
+(rf/dispatch-sync [::rp/add-keyboard-event-listener "keydown"])
 
-            [foo.events :as events]
-            [foo.views :as views]
-            [foo.config :as config]
-            ))
+;; or
+(rf/dispatch-sync [::rp/add-keyboard-event-listener "keypress"])
 
-
-(defn dev-setup []
-  (when config/debug?
-    (enable-console-print!)
-    (println "dev mode")))
-
-(defn mount-root []
-  (re-frame/clear-subscription-cache!)
-  (reagent/render [views/main-panel]
-                  (.getElementById js/document "app")))
-
-(defn ^:export init []
-  (re-frame/dispatch-sync [::events/initialize-db])
-  
-  ;; And this (2 of 2)
-  (re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keydown"])
-
-  (dev-setup)
-  (mount-root))
+;; or
+(rf/dispatch-sync [::rp/add-keyboard-event-listener "keyup"])
 ```
 
-Notes:
+### `::rp/set-keydown-event`
 
-- You can pass `"keydown"`, `"keypress"`, or `"keyup"` to
-  `::rp/add-keyboard-event-listener`.
-- You need to dispatch `::rp/add-keyboard-event-listener` from the
-  `init` function instead of `mount-root`. `init` is ran **once** when
-  the application loads, and `mount-root` runs **everytime** figwheel
-  updates the application. This is significant, because you only want
-  to add one event listener!
+`::rp/set-keydown-event` takes a hash-map of `:event-keys`,
+`:clear-keys`, and `:prevent-default-keys` and listens for *keydown*
+events.
 
-### The `::rp/set-keydown-event`, `::rp/set-keypress-event`, and  `::rp/set-keyup-event` events
+- For `:event-keys`, there is a vector of *event + key combo* vectors.
+  If any of the key combos are true, then the event will get
+  dispatched.
+- For `:clear-keys`, there is a vector of just *key combo* vectors. If
+  any of the key combos are true, then the recently recorded keys will
+  be cleared.
+- For `:prevent-default-keys` there is a vector of just *key combo*
+  vectors. If any of the key combos are true, then the default browser
+  action for the last key that was pressed will be prevented.
 
-Next, to use re-pressed, you will need to dispatch a
-`::rp/set-keydown-event`, `::rp/set-keypress-event`, or
-`::rp/set-keyup-event` event somewhere.  Personally, I like
-dispatching this in my routes file (because I may want to handle
-keyboard events differently on each page).
+This is a description of the shape:
 
-Here is an example, using the `::rp/set-keydown-event` event.
+```clojure
+(rf/dispatch
+ [::rp/set-keydown-event
+  {:event-keys [
+                [<event vector>
+                 <key-combo vector>
+                 ...
+                 <key-combo vectorN>]
+                ]
+
+   :clear-keys [<key-combo vector>
+                ...
+                <key-combo vectorN>]
+
+   :prevent-default-keys [<key-combo vector>
+                          ...
+                          <key-combo vectorN>]}])
+```
+
+Here is an example:
 
 ```clojure
 (re-frame/dispatch
@@ -125,8 +145,9 @@ Here is an example, using the `::rp/set-keydown-event` event.
    }])
 ```
 
+
 For `:event-keys`, `:clear-keys`, and `:prevent-default-keys`, the
-keys in the vector of key combos take the following shape:
+keys in key combos vectors take the following shape:
 
 ```clojure
 {:which    <int>
@@ -137,7 +158,7 @@ keys in the vector of key combos take the following shape:
  }
 ```
 
-For `:event-keys`, the event will be called with a few things *conj*ed
+For `:event-keys`, the *event* will be called with a few things *conj*ed
 on to the end of the event vector. For example:
 
 ```
@@ -150,9 +171,84 @@ on to the end of the event vector. For example:
 
 Where:
 
-- `js-event` is the javascript event of the most recently pressed key
+- `js-event` is the javascript event (i.e. jQuery event) of the most recently pressed key
 - `keyboard-keys` is a collection of the recently pressed keys taking
   the shape of the clojurescript hash-map described above.
+
+
+### `::rp/set-keypress-event`
+
+Listens to *keypress* events, otherwise it is the same as `::rp/set-keydown-event` (except `:prevent-default-keys` is not supported).
+
+### `::rp/set-keyup-event`
+
+Listens to *keyup* events, otherwise it is the same as `::rp/set-keydown-event` (except `:prevent-default-keys` is not supported).
+
+# Usage
+
+Create a new re-frame application.
+
+```
+lein new re-frame foo
+```
+
+Add the following to the `:dependencies` vector of your *project.clj*
+file.
+
+```clojure
+[re-pressed "0.1.0-alpha"]
+```
+
+Then require re-pressed in the core namespace, and add the
+`::rp/add-keyboard-event-listener` event.
+
+```clojure
+(ns foo.core
+  (:require [reagent.core :as reagent]
+            [re-frame.core :as re-frame]
+			
+            ;; Add this (1 of 2)
+            [re-pressed.core :as rp]
+
+            [foo.events :as events]
+            [foo.views :as views]
+            [foo.config :as config]
+            ))
+
+(defn dev-setup []
+  (when config/debug?
+    (enable-console-print!)
+    (println "dev mode")))
+
+(defn mount-root []
+  (re-frame/clear-subscription-cache!)
+  (reagent/render [views/main-panel]
+                  (.getElementById js/document "app")))
+
+(defn ^:export init []
+  (re-frame/dispatch-sync [::events/initialize-db])
+  
+  ;; And this (2 of 2)
+  (re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keydown"])
+
+  (dev-setup)
+  (mount-root))
+```
+
+Notes:
+
+- You can pass `"keydown"`, `"keypress"`, or `"keyup"` to
+  `::rp/add-keyboard-event-listener`.
+- You need to dispatch `::rp/add-keyboard-event-listener` from the
+  `init` function instead of `mount-root`. `init` is ran **once** when
+  the application loads, and `mount-root` runs **everytime** figwheel
+  updates the application. This is significant, because you only want
+  to add one event listener!
+
+Next, you will need to dispatch a `::rp/set-keydown-event`,
+`::rp/set-keypress-event`, or `::rp/set-keyup-event` event somewhere.
+Personally, I like dispatching this in my routes file (because I may
+want to handle keyboard events differently on each page).
 
 ## Gotchas
 
