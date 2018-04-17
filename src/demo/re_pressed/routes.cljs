@@ -26,7 +26,7 @@
     (rf/dispatch [::events/set-active-panel :home-panel])
 
     (rf/dispatch
-     [::rp/set-keydown-event
+     [::rp/set-keydown-rules
       {:event-keys [[[::events/log "Keydown was pressed"]
                      ;; enter
                      [{:which 13}]]
@@ -49,12 +49,15 @@
                       :ctrlKey true}]]
 
        :prevent-default-keys [;; ctrl+g
-                              [{:which   71
-                                :ctrlKey true}]]
+                              {:which   71
+                               :ctrlKey true}]
+
+       :always-listen-keys [;; enter
+                            {:which 13}]
        }])
 
-    (rf/dispatch
-     [::rp/set-keypress-event
+    #_(rf/dispatch
+     [::rp/set-keypress-rules
       {:event-keys [[[::events/log "Keypress was pressed"]
                      ;; enter
                      [{:which 13}]]]
@@ -65,8 +68,8 @@
                     ]
        }])
 
-    (rf/dispatch
-     [::rp/set-keyup-event
+    #_(rf/dispatch
+     [::rp/set-keyup-rules
       {:event-keys [[[::events/log "Keydown was pressed"]
                      ;; enter
                      [{:which 13}]]]

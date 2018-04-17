@@ -12,10 +12,10 @@ Re-pressed is a library that handles keyboard events
 for [re-frame](https://github.com/Day8/re-frame) applications.
 
 ```clojure
-[re-pressed "0.1.0-alpha"]
+[re-pressed "0.2.0"]
 ```
 
-**Note**: For now, this library should be considered *alpha quality*.
+**Note**: For now, this library should be considered *alpha quality* and the api is still settling.
 
 ![re-pressed gif not found](re-pressed.gif)
 
@@ -34,8 +34,8 @@ likely be asking yourself, "Should I use keyCode, key, which, etc?".
 With re-pressed, you only set up one keyboard event listener when your
 application starts, with `::rp/add-keyboard-event-listener`. However,
 that does not mean that you are locked in to one set of rules for how
-to handle keyboard events. By dispatching `::rp/set-keydown-event`,
-`::rp/set-keypress-event`, or `::rp/set-keyup-event`, you can update
+to handle keyboard events. By dispatching `::rp/set-keydown-rules`,
+`::rp/set-keypress-rules`, or `::rp/set-keyup-rules`, you can update
 the rules dynamically.
 
 In addition, jQuery is able to ensure cross-browser compatibility with
@@ -62,27 +62,30 @@ There are three options, and you can use more than one if you'd like:
 (rf/dispatch-sync [::rp/add-keyboard-event-listener "keyup"])
 ```
 
-### `::rp/set-keydown-event`
+### `::rp/set-keydown-rules`
 
-`::rp/set-keydown-event` takes a hash-map of `:event-keys`,
+`::rp/set-keydown-rules` takes a hash-map of `:event-keys`,
 `:clear-keys`, and `:prevent-default-keys` and listens for *keydown*
 events.
 
 - For `:event-keys`, there is a vector of *event + key combo* vectors.
   If any of the key combos are true, then the event will get
   dispatched.
-- For `:clear-keys`, there is a vector of just *key combo* vectors. If
-  any of the key combos are true, then the recently recorded keys will
-  be cleared.
-- For `:prevent-default-keys` there is a vector of just *key combo*
-  vectors. If any of the key combos are true, then the default browser
-  action for the last key that was pressed will be prevented.
+- For `:clear-keys`, there is a vector of *key combo* vectors. If any
+  of the key combos are true, then the recently recorded keys will be
+  cleared.
+- For `:always-listen-keys`, there is a vector of just *keys*. If any
+  of the keys are pressed, then that key will always be recorded by
+  re-pressed. *By default, keys are ignored when pressed inside of an input, select, or textarea.*
+- For `:prevent-default-keys` there is a vector of just *keys*. If any
+  of the keys are pressed, then the default browser action for that
+  key will be prevented.
 
 This is a description of the shape:
 
 ```clojure
 (rf/dispatch
- [::rp/set-keydown-event
+ [::rp/set-keydown-rules
   {:event-keys [
                 [<event vector>
                  <key-combo vector>
@@ -94,16 +97,22 @@ This is a description of the shape:
                 ...
                 <key-combo vectorN>]
 
-   :prevent-default-keys [<key-combo vector>
+   :always-listen-keys [<key>
+                        ...
+                        <keyN>]
+
+   :prevent-default-keys [<key>
                           ...
-                          <key-combo vectorN>]}])
+                          <keyN>]
+
+   }])
 ```
 
 Here is an example:
 
 ```clojure
 (re-frame/dispatch
- [::rp/set-keydown-event
+ [::rp/set-keydown-rules
   {;; takes a collection of events followed by key combos that can trigger the event
    :event-keys [
                 ;; Event & key combos 1
@@ -124,7 +133,8 @@ Here is an example:
                  [{:which 9} {:which 9}]
                  ]]
 
-   ;; takes a collection of key combos that, if pressed, will clear the recorded keys
+   ;; takes a collection of key combos that, if pressed, will clear
+   ;; the recorded keys
    :clear-keys
    ;; will clear the previously recorded keys if
    [;; escape
@@ -134,20 +144,29 @@ Here is an example:
       :ctrlKey true}]]
    ;; is pressed
 
-   ;; takes a collection of key combos that, if pressed, will prevent the default browser action
+   ;; takes a collection of keys that will always be recorded
+   ;; (regardless if the user is typing in an input, select, or textarea)
+   :always-listen-keys
+   ;; will always record if
+   [;; enter
+    {:which 13}]
+   ;; is pressed
+
+   ;; takes a collection of keys that will prevent the default browser
+   ;; action when any of those keys are pressed
    ;; (note: this is only available to keydown)
    :prevent-default-keys
    ;; will prevent the browser default action if
    [;; Ctrl+g
-    [{:which   71
-      :ctrlKey true}]]
+    {:which   71
+      :ctrlKey true}]
     ;; is pressed
    }])
 ```
 
 
-For `:event-keys`, `:clear-keys`, and `:prevent-default-keys`, the
-keys in key combos vectors take the following shape:
+For `:event-keys`, `:clear-keys`, `:always-listen-keys`, and
+`:prevent-default-keys`, the keys take the following shape:
 
 ```clojure
 {:which    <int>
@@ -176,13 +195,13 @@ Where:
   the shape of the clojurescript hash-map described above.
 
 
-### `::rp/set-keypress-event`
+### `::rp/set-keypress-rules`
 
-Listens to *keypress* events, otherwise it is the same as `::rp/set-keydown-event` (except `:prevent-default-keys` is not supported).
+Listens to *keypress* events, otherwise it is the same as `::rp/set-keydown-rules` (except `:prevent-default-keys` is not supported).
 
-### `::rp/set-keyup-event`
+### `::rp/set-keyup-rules`
 
-Listens to *keyup* events, otherwise it is the same as `::rp/set-keydown-event` (except `:prevent-default-keys` is not supported).
+Listens to *keyup* events, otherwise it is the same as `::rp/set-keydown-rules` (except `:prevent-default-keys` is not supported).
 
 # Usage
 
@@ -196,7 +215,7 @@ Add the following to the `:dependencies` vector of your *project.clj*
 file.
 
 ```clojure
-[re-pressed "0.1.0-alpha"]
+[re-pressed "0.2.0"]
 ```
 
 Then require re-pressed in the core namespace, and add the
@@ -206,7 +225,7 @@ Then require re-pressed in the core namespace, and add the
 (ns foo.core
   (:require [reagent.core :as reagent]
             [re-frame.core :as re-frame]
-			
+
             ;; Add this (1 of 2)
             [re-pressed.core :as rp]
 
@@ -227,7 +246,7 @@ Then require re-pressed in the core namespace, and add the
 
 (defn ^:export init []
   (re-frame/dispatch-sync [::events/initialize-db])
-  
+
   ;; And this (2 of 2)
   (re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keydown"])
 
@@ -245,8 +264,8 @@ Notes:
   updates the application. This is significant, because you only want
   to add one event listener!
 
-Next, you will need to dispatch a `::rp/set-keydown-event`,
-`::rp/set-keypress-event`, or `::rp/set-keyup-event` event somewhere.
+Next, you will need to dispatch a `::rp/set-keydown-rules`,
+`::rp/set-keypress-rules`, or `::rp/set-keyup-rules` event somewhere.
 Personally, I like dispatching this in my routes file (because I may
 want to handle keyboard events differently on each page).
 
@@ -255,10 +274,10 @@ want to handle keyboard events differently on each page).
 - For keypress events, you only have access to things like letters and
   numbers. This is unlike keydown and keyup events, where you have
   access to more things like the Escape key.
-- Using `:prevent-default-keys` only works on keydown-events. This is
-  because the default action will happen before keypress and keyup
-  events happen.
-- Certain browser default actions cannot be overwritten, like Ctrl+n
+- Using `:prevent-default-keys` only works with
+  `::rp/set-keydown-rules`. This is because the default action will
+  happen before keypress and keyup events happen.
+- Certain browser default actions cannot be overwritten, like `ctrl+n`
   in chrome.
 
 ## Questions

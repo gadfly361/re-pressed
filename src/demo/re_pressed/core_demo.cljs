@@ -23,8 +23,8 @@
 (defn ^:export init []
   (re-frame/dispatch-sync [::events/initialize-db])
   (re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keydown"])
-  (re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keypress"])
-  (re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keyup"])
+  #_(re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keypress"])
+  #_(re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keyup"])
   (routes/app-routes)
   (dev-setup)
   (mount-root))

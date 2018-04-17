@@ -34,6 +34,14 @@
            suffix)))))
 
 
+(defn is-key?
+  [recent-key key-map]
+  (every? (fn [[k v]]
+            (= (get recent-key k)
+               v))
+          key-map))
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subs
@@ -55,11 +63,17 @@
      (fn [db _]
        (get-in db [(ns-keyword) :clear-keys])))
 
+    (rf/reg-sub
+     (ns-keyword "-always-listen-keys")
+     (fn [db _]
+       (get-in db [(ns-keyword) :always-listen-keys])))
+
     (when (= "keydown" event-type)
       (rf/reg-sub
        (ns-keyword "-prevent-default-keys")
        (fn [db _]
-         (get-in db [(ns-keyword) :prevent-default-keys]))))))
+         (get-in db [(ns-keyword) :prevent-default-keys]))))
+    ))
 
 
 
@@ -148,28 +162,26 @@
                                    "SELECT"
                                    "TEXTAREA"} tag-name)
                 ;; --
-                ]
 
-            (when (and (not modifier-key?)
-                       (not entering-input?))
-              (rf/dispatch-sync [(ns-keyword "-set-key")
-                                 {:altKey   (.-altKey e)
-                                  :ctrlKey  (.-ctrlKey e)
-                                  :metaKey  (.-metaKey e)
-                                  :shiftKey (.-shiftKey e)
-                                  :which    (.-which e)}])
+                hit-key {:altKey   (.-altKey e)
+                         :ctrlKey  (.-ctrlKey e)
+                         :metaKey  (.-metaKey e)
+                         :shiftKey (.-shiftKey e)
+                         :which    (.-which e)}
 
-              (let [recent-keys          @(rf/subscribe [(ns-keyword "-keys")])
-                    event-keys           @(rf/subscribe [(ns-keyword "-event-keys")])
-                    clear-keys           @(rf/subscribe [(ns-keyword "-clear-keys")])
+                always-listen-keys @(rf/subscribe [(ns-keyword "-always-listen-keys")])
+                always-listen?     (some #(is-key? hit-key %) always-listen-keys)]
+
+            (when (or (and (not modifier-key?)
+                           (not entering-input?))
+                      always-listen?)
+              (rf/dispatch-sync [(ns-keyword "-set-key") hit-key])
+
+              (let [recent-keys @(rf/subscribe [(ns-keyword "-keys")])
+                    event-keys  @(rf/subscribe [(ns-keyword "-event-keys")])
+                    clear-keys  @(rf/subscribe [(ns-keyword "-clear-keys")])
 
                     recent-key (last recent-keys)
-
-                    is-key? (fn [recent-key key-map]
-                              (every? (fn [[k v]]
-                                        (= (get recent-key k)
-                                           v))
-                                      key-map))
 
                     is-key-sequence? (fn [key-maps]
                                        (every? true?
@@ -190,13 +202,11 @@
                                       (filter #(true? (second %)))
                                       first)
 
-                    clear?           (some is-key-sequence? clear-keys)
-
-                    ]
+                    clear? (some is-key-sequence? clear-keys)]
 
                 (when (= "keydown" event-type)
                   (let [prevent-default-keys @(rf/subscribe [(ns-keyword "-prevent-default-keys")])
-                        prevent-default?     (some is-key-sequence? prevent-default-keys)]
+                        prevent-default?     (some #(is-key? recent-key %) prevent-default-keys)]
                     (when prevent-default?
                       (rf/dispatch-sync [(ns-keyword "-prevent-default-keys")
                                          e]))))

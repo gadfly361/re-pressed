@@ -52,6 +52,8 @@
     [:div
      [:h1 "Home Panel"]
 
+     [:input]
+
      [style card-active-index]
 
      [:pre (with-out-str (cljs.pprint/pprint
