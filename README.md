@@ -53,20 +53,20 @@ application *first* loads.
 There are three options, and you can use more than one if you'd like:
 
 ```clojure
-(rf/dispatch-sync [::rp/add-keyboard-event-listener "keydown"])
+(re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keydown"])
 
 ;; or
-(rf/dispatch-sync [::rp/add-keyboard-event-listener "keypress"])
+(re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keypress"])
 
 ;; or
-(rf/dispatch-sync [::rp/add-keyboard-event-listener "keyup"])
+(re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keyup"])
 ```
 
 ### `::rp/set-keydown-rules`
 
 `::rp/set-keydown-rules` takes a hash-map of `:event-keys`,
-`:clear-keys`, and `:prevent-default-keys` and listens for *keydown*
-events.
+`:clear-keys`, `:always-listen-keys`, and `:prevent-default-keys` and
+listens for *keydown* events.
 
 - For `:event-keys`, there is a vector of *event + key combo* vectors.
   If any of the key combos are true, then the event will get
@@ -84,7 +84,7 @@ events.
 This is a description of the shape:
 
 ```clojure
-(rf/dispatch
+(re-frame/dispatch
  [::rp/set-keydown-rules
   {:event-keys [
                 [<event vector>
@@ -275,7 +275,7 @@ want to handle keyboard events differently on each page).
   numbers. This is unlike keydown and keyup events, where you have
   access to more things like the Escape key.
 - Using `:prevent-default-keys` only works with
-  `::rp/set-keydown-rules`. This is because the default action will
+  `::rp/set-keydown-rules`. This is because the default browser action will
   happen before keypress and keyup events happen.
 - Certain browser default actions cannot be overwritten, like `ctrl+n`
   in chrome.
