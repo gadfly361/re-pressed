@@ -15,7 +15,7 @@ for [re-frame](https://github.com/Day8/re-frame) applications.
 [re-pressed "0.2.0"]
 ```
 
-**Note**: For now, this library should be considered *alpha quality* and the api is still settling.
+**Note**: For now, this library should be considered *alpha quality*, as the api is still settling.
 
 ![re-pressed gif not found](re-pressed.gif)
 
