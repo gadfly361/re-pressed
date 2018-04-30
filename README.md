@@ -14,6 +14,11 @@ for [re-frame](https://github.com/Day8/re-frame) applications.
 ```clojure
 [re-pressed "0.2.0"]
 ```
+And in your ns:
+```clojure
+(ns your-ns
+  (:require [re-pressed.core :as rp]))
+```
 
 **Note**: For now, this library should be considered *alpha quality*, as the api is still settling.
 
