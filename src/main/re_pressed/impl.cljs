@@ -37,8 +37,11 @@
 (defn is-key?
   [recent-key key-map]
   (every? (fn [[k v]]
-            (= (get recent-key k)
-               v))
+            (let [same-kv? (= (get recent-key k)
+                              v)]
+              (or same-kv?
+                  (when (= :which k)
+                    (= :any v)))))
           key-map))
 
 
