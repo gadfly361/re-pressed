@@ -1,5 +1,11 @@
 # Changes
 
+## 0.2.1 (2018-05-28)
+
+Bug Fixes
+
+- [#4, Key sequences are incorrectly compared to most recent keys in reverse order](https://github.com/gadfly361/re-pressed/issues/4)
+
 ## 0.2.0 (2018-04-17)
 
 **Additions**

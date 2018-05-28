@@ -189,7 +189,7 @@
                                                 #(is-key? %1 %2)
                                                 (concat (reverse recent-keys)
                                                         (repeat max-record {}))
-                                                key-maps)))
+                                                (reverse key-maps))))
 
                     check-events (doall
                                   (for [[trigger-event

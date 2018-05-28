@@ -12,7 +12,7 @@ Re-pressed is a library that handles keyboard events
 for [re-frame](https://github.com/Day8/re-frame) applications.
 
 ```clojure
-[re-pressed "0.2.0"]
+[re-pressed "0.2.1"]
 ```
 And in your ns:
 ```clojure
@@ -220,7 +220,7 @@ Add the following to the `:dependencies` vector of your *project.clj*
 file.
 
 ```clojure
-[re-pressed "0.2.0"]
+[re-pressed "0.2.1"]
 ```
 
 Then require re-pressed in the core namespace, and add the

@@ -31,6 +31,12 @@
                      ;; enter
                      [{:which 13}]]
 
+                    [[::events/log "Hello world"]
+                     [;; h
+                      {:which 72}
+                      ;; w
+                      {:which 87}]]
+
                     [[::events/card-move-down]
                      ;; down arrow or s
                      [{:which 40}]

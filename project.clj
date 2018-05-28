@@ -1,4 +1,4 @@
-(defproject re-pressed "0.2.0"
+(defproject re-pressed "0.2.1"
   :description "A keyboard events library for re-frame"
   :url "https://github.com/gadfly361/re-pressed"
   :license {:name "MIT"}
