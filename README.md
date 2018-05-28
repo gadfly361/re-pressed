@@ -210,72 +210,15 @@ Listens to *keyup* events, otherwise it is the same as `::rp/set-keydown-rules` 
 
 # Usage
 
-Create a new re-frame application.
+Create a new re-frame application and add the `+re-pressed` option.
 
 ```
-lein new re-frame foo
+lein new re-frame foo +re-pressed
 ```
-
-Add the following to the `:dependencies` vector of your *project.clj*
-file.
-
-```clojure
-[re-pressed "0.2.1"]
-```
-
-Then require re-pressed in the core namespace, and add the
-`::rp/add-keyboard-event-listener` event.
-
-```clojure
-(ns foo.core
-  (:require [reagent.core :as reagent]
-            [re-frame.core :as re-frame]
-
-            ;; Add this (1 of 2)
-            [re-pressed.core :as rp]
-
-            [foo.events :as events]
-            [foo.views :as views]
-            [foo.config :as config]
-            ))
-
-(defn dev-setup []
-  (when config/debug?
-    (enable-console-print!)
-    (println "dev mode")))
-
-(defn mount-root []
-  (re-frame/clear-subscription-cache!)
-  (reagent/render [views/main-panel]
-                  (.getElementById js/document "app")))
-
-(defn ^:export init []
-  (re-frame/dispatch-sync [::events/initialize-db])
-
-  ;; And this (2 of 2)
-  (re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keydown"])
-
-  (dev-setup)
-  (mount-root))
-```
-
-Notes:
-
-- You can pass `"keydown"`, `"keypress"`, or `"keyup"` to
-  `::rp/add-keyboard-event-listener`.
-- You need to dispatch `::rp/add-keyboard-event-listener` from the
-  `init` function instead of `mount-root`. `init` is ran **once** when
-  the application loads, and `mount-root` runs **everytime** figwheel
-  updates the application. This is significant, because you only want
-  to add one event listener!
-
-Next, you will need to dispatch a `::rp/set-keydown-rules`,
-`::rp/set-keypress-rules`, or `::rp/set-keyup-rules` event somewhere.
-Personally, I like dispatching this in my routes file (because I may
-want to handle keyboard events differently on each page).
 
 ## Gotchas
 
+- If you are seeing multiple instances of the same event being triggered, it is probably because you are dispatching `::rp/add-keyboard-event-listener` multiple times. This happens most often when using hot reload tools, such as figwheel, and you dispatch-sync the `::rp/add-keyboard-event-listener` event in a place that figwheel calls on reload ... instead of in a function that *only gets called once* when the application first starts.
 - For keypress events, you only have access to things like letters and
   numbers. This is unlike keydown and keyup events, where you have
   access to more things like the Escape key.
@@ -284,6 +227,13 @@ want to handle keyboard events differently on each page).
   happen before keypress and keyup events happen.
 - Certain browser default actions cannot be overwritten, like `ctrl+n`
   in chrome.
+  
+### Side note:
+
+When using re-pressed, you will need to dispatch a `::rp/set-keydown-rules`,
+`::rp/set-keypress-rules`, or `::rp/set-keyup-rules` event somewhere.
+Personally, I like dispatching this in my routes file because I may
+want to handle keyboard events differently on each page.
 
 ## Questions
 
