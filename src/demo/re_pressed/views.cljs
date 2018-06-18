@@ -70,7 +70,19 @@
            card]))
        ]]
 
+     [:a {:href "#/about"}
+      "go to about page"]
+
      ]))
+
+
+;; about
+
+(defn about-panel []
+  [:div
+   [:h1 "About page"]
+   [:a {:href "#/"}
+    "go to about page"]])
 
 
 
@@ -79,6 +91,7 @@
 (defn- panels [panel-name]
   (case panel-name
     :home-panel [home-panel]
+    :about-panel [about-panel]
     [:div]))
 
 (defn show-panel [panel-name]

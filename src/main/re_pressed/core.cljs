@@ -25,6 +25,7 @@
                  prevent-default-keys]
           :as   opts}]]
    {:db (-> db
+            (assoc-in [::keydown :keys] nil)
             (assoc-in [::keydown :event-keys] event-keys)
             (assoc-in [::keydown :clear-keys] clear-keys)
             (assoc-in [::keydown :always-listen-keys] always-listen-keys)
@@ -40,6 +41,7 @@
                  always-listen-keys]
           :as   opts}]]
    {:db (-> db
+            (assoc-in [::keypress :keys] nil)
             (assoc-in [::keypress :event-keys] event-keys)
             (assoc-in [::keypress :clear-keys] clear-keys)
             (assoc-in [::keypress :always-listen-keys] always-listen-keys)
@@ -54,6 +56,7 @@
                  always-listen-keys]
           :as   opts}]]
    {:db (-> db
+            (assoc-in [::keyup :keys] nil)
             (assoc-in [::keyup :event-keys] event-keys)
             (assoc-in [::keyup :clear-keys] clear-keys)
             (assoc-in [::keyup :always-listen-keys] always-listen-keys)

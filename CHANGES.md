@@ -1,5 +1,11 @@
 # Changes
 
+## 0.2.2 (2018-06-18)
+
+Bug Fixes
+
+- [#5 need to clear the previously tracked keys whenever the rules change](https://github.com/gadfly361/re-pressed/issues/5)
+
 ## 0.2.1 (2018-05-28)
 
 Bug Fixes

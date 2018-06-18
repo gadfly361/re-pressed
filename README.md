@@ -12,7 +12,7 @@ Re-pressed is a library that handles keyboard events
 for [re-frame](https://github.com/Day8/re-frame) applications.
 
 ```clojure
-[re-pressed "0.2.1"]
+[re-pressed "0.2.2"]
 ```
 And in your ns:
 ```clojure
