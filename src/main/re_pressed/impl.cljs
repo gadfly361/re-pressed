@@ -151,7 +151,7 @@
       (fn [e]
         (let [ns-keyword (->ns-keyword event-type)
 
-              e-key         (.-which e)
+              e-key         (.-keyCode e)
               modifier-key? (modifier-keys e-key)
 
               ;; --
