@@ -2,6 +2,7 @@
 /target
 /*-init.clj
 /dev-resources/public/js/compiled
+/.nrepl-port
 out
 
 pom.xml
