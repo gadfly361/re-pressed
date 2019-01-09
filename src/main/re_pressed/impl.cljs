@@ -1,8 +1,7 @@
 (ns re-pressed.impl
   (:require
-   [clojure.set :as set]
    [re-frame.core :as rf]
-   [cljsjs.jquery]
+   [goog.events :as ev]
    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -146,78 +145,77 @@
    (register-events event-type)
    (register-effects event-type)
 
-   (.on (js/$ js/document)
-        event-type
-        (fn [e]
-          (let [ns-keyword (->ns-keyword event-type)
+   (ev/listen
+      js/document
+      event-type
+      (fn [e]
+        (let [ns-keyword (->ns-keyword event-type)
 
-                e-key         (.-which e)
-                modifier-key? (modifier-keys e-key)
+              e-key         (.-keyCode e)
+              modifier-key? (modifier-keys e-key)
 
-                ;; --
-                ;; thanks re-frame-10x for this snippet
-                tag-name        (.-tagName (.-target e))
-                entering-input? (contains?
-                                 #{"INPUT"
-                                   "SELECT"
-                                   "TEXTAREA"} tag-name)
-                ;; --
+              ;; --
+              ;; thanks re-frame-10x for this snippet
+              tag-name        (.-tagName (.-target e))
+              entering-input? (contains?
+                               #{"INPUT"
+                                 "SELECT"
+                                 "TEXTAREA"} tag-name)
+              ;; --
 
-                hit-key {:altKey   (.-altKey e)
-                         :ctrlKey  (.-ctrlKey e)
-                         :metaKey  (.-metaKey e)
-                         :shiftKey (.-shiftKey e)
-                         :which    (.-which e)}
+              hit-key {:altKey   (.-altKey e)
+                       :ctrlKey  (.-ctrlKey e)
+                       :metaKey  (.-metaKey e)
+                       :shiftKey (.-shiftKey e)
+                       :keyCode  (.-keyCode e)}
 
-                always-listen-keys @(rf/subscribe [(ns-keyword "-always-listen-keys")])
-                always-listen?     (some #(is-key? hit-key %) always-listen-keys)]
+              always-listen-keys @(rf/subscribe [(ns-keyword "-always-listen-keys")])
+              always-listen?     (some #(is-key? hit-key %) always-listen-keys)]
 
-            (when (or (and (not modifier-key?)
-                           (not entering-input?))
-                      always-listen?)
-              (rf/dispatch-sync [(ns-keyword "-set-key") hit-key])
+          (when (or (and (not modifier-key?)
+                         (not entering-input?))
+                    always-listen?)
+            (rf/dispatch-sync [(ns-keyword "-set-key") hit-key])
+            (let [recent-keys @(rf/subscribe [(ns-keyword "-keys")])
+                  event-keys  @(rf/subscribe [(ns-keyword "-event-keys")])
+                  clear-keys  @(rf/subscribe [(ns-keyword "-clear-keys")])
 
-              (let [recent-keys @(rf/subscribe [(ns-keyword "-keys")])
-                    event-keys  @(rf/subscribe [(ns-keyword "-event-keys")])
-                    clear-keys  @(rf/subscribe [(ns-keyword "-clear-keys")])
+                  recent-key (last recent-keys)
 
-                    recent-key (last recent-keys)
+                  is-key-sequence? (fn [key-maps]
+                                     (every? true?
+                                             (mapv
+                                              #(is-key? %1 %2)
+                                              (concat (reverse recent-keys)
+                                                      (repeat max-record {}))
+                                              (reverse key-maps))))
 
-                    is-key-sequence? (fn [key-maps]
-                                       (every? true?
-                                               (mapv
-                                                #(is-key? %1 %2)
-                                                (concat (reverse recent-keys)
-                                                        (repeat max-record {}))
-                                                (reverse key-maps))))
+                  check-events (doall
+                                (for [[trigger-event
+                                       & ks] event-keys]
+                                  (let [triggered? (some is-key-sequence? ks)]
+                                    (vector trigger-event triggered?))))
 
-                    check-events (doall
-                                  (for [[trigger-event
-                                         & ks] event-keys]
-                                    (let [triggered? (some is-key-sequence? ks)]
-                                      (vector trigger-event triggered?))))
+                  [triggered-event
+                   event?] (some->> check-events
+                                    (filter #(true? (second %)))
+                                    first)
 
-                    [triggered-event
-                     event?] (some->> check-events
-                                      (filter #(true? (second %)))
-                                      first)
+                  clear? (some is-key-sequence? clear-keys)]
+              (when (= "keydown" event-type)
+                (let [prevent-default-keys @(rf/subscribe [(ns-keyword "-prevent-default-keys")])
+                      prevent-default?     (some #(is-key? recent-key %) prevent-default-keys)]
+                  (when prevent-default?
+                    (rf/dispatch-sync [(ns-keyword "-prevent-default-keys")
+                                       e]))))
 
-                    clear? (some is-key-sequence? clear-keys)]
+              (cond
+                clear?
+                (rf/dispatch-sync [(ns-keyword "-clear-keys")])
 
-                (when (= "keydown" event-type)
-                  (let [prevent-default-keys @(rf/subscribe [(ns-keyword "-prevent-default-keys")])
-                        prevent-default?     (some #(is-key? recent-key %) prevent-default-keys)]
-                    (when prevent-default?
-                      (rf/dispatch-sync [(ns-keyword "-prevent-default-keys")
-                                         e]))))
+                (and event?)
+                (rf/dispatch-sync (conj triggered-event
+                                        e
+                                        recent-keys))
 
-                (cond
-                  clear?
-                  (rf/dispatch-sync [(ns-keyword "-clear-keys")])
-
-                  (and event?)
-                  (rf/dispatch-sync (conj triggered-event
-                                          e
-                                          recent-keys))
-
-                  :else nil))))))))
+                :else nil))))))))

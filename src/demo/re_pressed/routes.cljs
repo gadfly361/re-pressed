@@ -29,48 +29,48 @@
      [::rp/set-keydown-rules
       {:event-keys [[[::events/log "Keydown was pressed"]
                      ;; enter
-                     [{:which 13}]]
+                     [{:keyCode 13}]]
 
                     [[::events/log "Hello world"]
                      [;; h
-                      {:which 72}
+                      {:keyCode 72}
                       ;; w
-                      {:which 87}]]
+                      {:keyCode 87}]]
 
                     [[::events/card-move-down]
                      ;; down arrow or s
-                     [{:which 40}]
-                     [{:which 83}]]
+                     [{:keyCode 40}]
+                     [{:keyCode 83}]]
 
                     [[::events/card-move-up]
                      ;; up arrow or w
-                     [{:which 38}]
-                     [{:which 87}]]
+                     [{:keyCode 38}]
+                     [{:keyCode 87}]]
                     ]
 
        :clear-keys [;; escape
-                    [{:which 27}]
+                    [{:keyCode 27}]
                     ;; ctrl+g
-                    [{:which   71
+                    [{:keyCode 71
                       :ctrlKey true}]]
 
        :prevent-default-keys [;; ctrl+g
-                              {:which   71
+                              {:keyCode 71
                                :ctrlKey true}]
 
        :always-listen-keys [;; enter
-                            {:which 13}]
+                            {:keyCode 13}]
        }])
 
     #_(rf/dispatch
      [::rp/set-keypress-rules
       {:event-keys [[[::events/log "Keypress was pressed"]
                      ;; enter
-                     [{:which 13}]]]
+                     [{:keyCode 13}]]]
 
        :clear-keys [
                     ;; q
-                    [{:which 113}]
+                    [{:keyCode 113}]
                     ]
        }])
 
@@ -78,11 +78,11 @@
      [::rp/set-keyup-rules
       {:event-keys [[[::events/log "Keydown was pressed"]
                      ;; enter
-                     [{:which 13}]]]
+                     [{:keyCode 13}]]]
 
        :clear-keys [
                     ;; delete
-                    [{:which 46}]
+                    [{:keyCode 46}]
                     ]
        }])
     )
