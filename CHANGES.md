@@ -1,5 +1,14 @@
 # Changes
 
+## 0.3.0 (2019-01-09)
+
+**BREAKING CHANGE** :
+- `:which` has been replaced by `:keyCode`
+
+Note: your existing apps will need to replace `:which` with `:keyCode` because in [#7] the dependecy on jQuery was removed and replace with google closure.  This was necessary because jQuery normalizes key identificaiton around `which` and google closure normalizes around `:keyCode`.
+
+Re-pressed no longer relies on jQuery!
+
 ## 0.2.2 (2018-06-18)
 
 Bug Fixes

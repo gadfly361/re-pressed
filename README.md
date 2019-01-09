@@ -12,8 +12,11 @@ Re-pressed is a library that handles keyboard events
 for [re-frame](https://github.com/Day8/re-frame) applications.
 
 ```clojure
-[re-pressed "0.2.2"]
+[re-pressed "0.3.0"]
 ```
+
+Note: if you are upgrading re-pressed from an earlier version, there was a breaking change - all instances of `:which` should be replaced with `:keyCode`. However, the upside is re-pressed no longer relies on jQuery!
+
 And in your ns:
 ```clojure
 (ns your-ns
@@ -43,8 +46,8 @@ to handle keyboard events. By dispatching `::rp/set-keydown-rules`,
 `::rp/set-keypress-rules`, or `::rp/set-keyup-rules`, you can update
 the rules dynamically.
 
-In addition, jQuery is able to ensure cross-browser compatibility with
-their `which` attribute. Re-pressed trusts that jQuery will do a good
+In addition, Google Closure is able to ensure cross-browser compatibility with
+their `keyCode` attribute. Re-pressed trusts that Google Closure will do a good
 job at keeping this current and uses it under the hood.
 
 # API
@@ -125,9 +128,9 @@ Here is an example:
                  [:some-event-id1]
                  ;; will be triggered if
                  ;; enter
-                 [{:which 13}]
+                 [{:keyCode 13}]
                  ;; or delete
-                 [{:which 46}]]
+                 [{:keyCode 46}]]
                 ;; is pressed
 
                 ;; Event & key combos 2
@@ -135,7 +138,7 @@ Here is an example:
                  [:some-event-id2]
                  ;; will be triggered if
                  ;; tab is pressed twice in a row
-                 [{:which 9} {:which 9}]
+                 [{:keyCode 9} {:keyCode 9}]
                  ]]
 
    ;; takes a collection of key combos that, if pressed, will clear
@@ -143,9 +146,9 @@ Here is an example:
    :clear-keys
    ;; will clear the previously recorded keys if
    [;; escape
-    [{:which 27}]
+    [{:keyCode 27}]
     ;; or Ctrl+g
-    [{:which   71
+    [{:keyCode   71
       :ctrlKey true}]]
    ;; is pressed
 
@@ -154,7 +157,7 @@ Here is an example:
    :always-listen-keys
    ;; will always record if
    [;; enter
-    {:which 13}]
+    {:keyCode 13}]
    ;; is pressed
 
    ;; takes a collection of keys that will prevent the default browser
@@ -163,7 +166,7 @@ Here is an example:
    :prevent-default-keys
    ;; will prevent the browser default action if
    [;; Ctrl+g
-    {:which   71
+    {:keyCode   71
       :ctrlKey true}]
     ;; is pressed
    }])
@@ -174,7 +177,7 @@ For `:event-keys`, `:clear-keys`, `:always-listen-keys`, and
 `:prevent-default-keys`, the keys take the following shape:
 
 ```clojure
-{:which    <int>
+{:keyCode    <int>
  :altKey   <boolean>
  :ctrlKey  <boolean>
  :metaKey  <boolean>
@@ -195,7 +198,7 @@ on to the end of the event vector. For example:
 
 Where:
 
-- `js-event` is the javascript event (i.e. jQuery event) of the most recently pressed key
+- `js-event` is the javascript event of the most recently pressed key
 - `keyboard-keys` is a collection of the recently pressed keys taking
   the shape of the clojurescript hash-map described above.
 
