@@ -248,4 +248,6 @@ handle is [@gadfly361](https://twitter.com/gadfly361)).
 
 Copyright © 2018 Matthew Jaoudi
 
+Copyright © 2019 Arne Schlüter
+
 Distributed under the The MIT License (MIT).
