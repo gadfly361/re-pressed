@@ -5,10 +5,10 @@
   :scm {:name "git"
         :url  "https://github.com/gadfly361/re-pressed"}
 
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.908"]
-                 [reagent "0.7.0"]
-                 [re-frame "0.10.5"]]
+  :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
+                 [org.clojure/clojurescript "1.10.520" :scope "provided"]
+                 [reagent "0.8.1" :scope "provided"]
+                 [re-frame "0.10.9" :scope "provided"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]]
 
@@ -21,12 +21,12 @@
   :profiles
   {:dev
    {:dependencies [[secretary "1.2.3"]
-                   [garden "1.3.4"]
-                   [binaryage/devtools "0.9.4"]
-                   [day8.re-frame/re-frame-10x "0.3.2"]
-                   [re-frisk "0.5.3"]
-                   [figwheel-sidecar "0.5.18"]]
-    :plugins      [[lein-figwheel "0.5.18"]]}}
+                   [garden "1.3.9"]
+                   [binaryage/devtools "0.9.10"]
+                   [day8.re-frame/re-frame-10x "0.4.3"]
+                   [re-frisk "0.5.4.1"]
+                   [figwheel-sidecar "0.5.19"]]
+    :plugins      [[lein-figwheel "0.5.19"]]}}
 
   :cljsbuild
   {:builds
