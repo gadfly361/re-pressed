@@ -1,5 +1,9 @@
 # Changes
 
+## 0.3.1 (2019-09-11)
+
+- bump dependency versions [#8](https://github.com/gadfly361/re-pressed/pull/8)
+
 ## 0.3.0 (2019-01-09)
 
 **BREAKING CHANGE** :
