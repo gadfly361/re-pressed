@@ -48,7 +48,8 @@ the rules dynamically.
 
 In addition, Google Closure is able to ensure cross-browser compatibility with
 their `keyCode` attribute. Re-pressed trusts that Google Closure will do a good
-job at keeping this current and uses it under the hood.
+job at keeping this current and uses it under the hood.  The list of keycodes 
+can be found [here](https://github.com/google/closure-library/blob/master/closure/goog/events/keycodes.js#L27).
 
 # API
 
