@@ -231,6 +231,7 @@ lein new re-frame foo +re-pressed
   happen before keypress and keyup events happen.
 - Certain browser default actions cannot be overwritten, like `ctrl+n`
   in chrome.
+- Order matters, and the first matching key combination will consume the event.  So for example, if you want to listen for both forward arrow (`{:keyCode 37}`) and control + forward arrow (`{:keyCode 37 :ctrlKey true}`), then you must put the combination before the singleton.  Similarly, control-shift-arrow must come before control-arrow, and so on.
   
 ### Side note:
 
