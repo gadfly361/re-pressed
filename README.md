@@ -23,8 +23,6 @@ And in your ns:
   (:require [re-pressed.core :as rp]))
 ```
 
-**Note**: For now, this library should be considered *alpha quality*, as the api is still settling.
-
 ![re-pressed gif not found](re-pressed.gif)
 
 # The Problem
