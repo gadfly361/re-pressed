@@ -214,8 +214,10 @@
                 (rf/dispatch-sync [(ns-keyword "-clear-keys")])
 
                 (and event?)
-                (rf/dispatch-sync (conj triggered-event
-                                        e
-                                        recent-keys))
+                (do
+                  (rf/dispatch-sync [(ns-keyword "-clear-keys")])
+                  (rf/dispatch-sync (conj triggered-event
+                                          e
+                                          recent-keys)))
 
                 :else nil))))))))
