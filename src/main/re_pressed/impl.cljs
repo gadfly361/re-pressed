@@ -140,12 +140,13 @@
  (keyword
   (str ns-root "keyboard-event"))
 
- (fn [{:keys [event-type]}]
+ (fn [{:keys [event-type arguments]}]
    (register-subs event-type)
    (register-events event-type)
    (register-effects event-type)
 
-   (ev/listen
+   (let [{:keys [clear-on-success-event-match]} arguments]
+     (ev/listen
       js/document
       event-type
       (fn [e]
@@ -213,11 +214,12 @@
                 clear?
                 (rf/dispatch-sync [(ns-keyword "-clear-keys")])
 
-                (and event?)
+                event?
                 (do
-                  (rf/dispatch-sync [(ns-keyword "-clear-keys")])
+                  (when clear-on-success-event-match
+                    (rf/dispatch-sync [(ns-keyword "-clear-keys")]))
                   (rf/dispatch-sync (conj triggered-event
                                           e
                                           recent-keys)))
 
-                :else nil))))))))
+                :else nil)))))))))
