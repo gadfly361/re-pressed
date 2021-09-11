@@ -69,6 +69,32 @@ There are three options, and you can use more than one if you'd like:
 (re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keyup"])
 ```
 
+### Event Listeners Options
+
+`::rp/add-keyboard-event-listener` can have optional values to set
+behaviors of event-listeners after the event-type.
+
+Such as;
+
+#### Clear `keydown-keys` with Matched Event
+
+`:clear-on-success-event-match` option is used to remove leftover
+key-presses after a success match of events.
+
+Default: `false`.
+
+``` clojure
+(re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keydown" :clear-on-success-event-match true])
+
+;; or
+(re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keypress" :clear-on-success-event-match true])
+
+;; or
+(re-frame/dispatch-sync [::rp/add-keyboard-event-listener "keyup" :clear-on-success-event-match true])
+
+```
+
+
 ### `::rp/set-keydown-rules`
 
 `::rp/set-keydown-rules` takes a hash-map of `:event-keys`,
