@@ -12,8 +12,8 @@
  ;; "keydown",
  ;; "keypress", or
  ;; "keyup"
- (fn [_ [_ event-type]]
-   {::keyboard-event {:event-type event-type}}))
+ (fn [_ [_ event-type & {:as args-map}]]
+   {::keyboard-event {:event-type event-type :arguments args-map}}))
 
 
 (rf/reg-event-fx
