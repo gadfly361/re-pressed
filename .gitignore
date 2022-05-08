@@ -9,3 +9,6 @@ pom.xml
 pom.xml.asc
 
 *.*~
+
+.cpcache/
+.DS_Store

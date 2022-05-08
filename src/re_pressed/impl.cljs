@@ -156,11 +156,17 @@
 
               ;; --
               ;; thanks re-frame-10x for this snippet
-              tag-name        (.-tagName (.-target e))
-              entering-input? (contains?
-                               #{"INPUT"
-                                 "SELECT"
-                                 "TEXTAREA"} tag-name)
+              el (.-target e)
+              tag-name        (.-tagName el)
+              _ (js/console.log "Editor target: %O" el)
+              _ (js/console.log "Contains?: " (.contains (.-classList el) "ProseMirror"))
+              _ (js/console.log "Contains?: " (.contains (.-classList el) "ProseMirror"))
+              entering-input? (or
+                               (contains?
+                                #{"INPUT"
+                                  "SELECT"
+                                  "TEXTAREA"} tag-name)
+                               (.contains (.-classList el) "ProseMirror"))
               ;; --
 
               hit-key {:altKey   (.-altKey e)

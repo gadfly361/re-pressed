@@ -1,0 +1,4 @@
+{:deps  {org.clojure/clojure       {:mvn/version "1.10.1"}
+         org.clojure/clojurescript {:mvn/version "1.10.520"}
+         reagent/reagent           {:mvn/version "0.8.1"}
+         re-frame/re-frame         {:mvn/version "0.10.9"}}}
