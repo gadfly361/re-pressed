@@ -1,5 +1,9 @@
 # Changes
 
+## 0.3.2 (2022-05-08)
+
+- add optional `:clear-on-success-event-match` to clear tracked keys if there is a successful match.
+
 ## 0.3.1 (2019-09-11)
 
 - bump dependency versions [#8](https://github.com/gadfly361/re-pressed/pull/8)
