@@ -12,7 +12,7 @@ Re-pressed is a library that handles keyboard events
 for [re-frame](https://github.com/Day8/re-frame) applications.
 
 ```clojure
-[re-pressed "0.3.1"]
+[re-pressed "0.3.2"]
 ```
 
 Note: if you are upgrading re-pressed from an earlier version, there was a breaking change - all instances of `:which` should be replaced with `:keyCode`. However, the upside is re-pressed no longer relies on jQuery!
