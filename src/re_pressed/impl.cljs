@@ -158,9 +158,6 @@
               ;; thanks re-frame-10x for this snippet
               el (.-target e)
               tag-name        (.-tagName el)
-              _ (js/console.log "Editor target: %O" el)
-              _ (js/console.log "Contains?: " (.contains (.-classList el) "ProseMirror"))
-              _ (js/console.log "Contains?: " (.contains (.-classList el) "ProseMirror"))
               entering-input? (or
                                (contains?
                                 #{"INPUT"
