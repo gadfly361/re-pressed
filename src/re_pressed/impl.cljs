@@ -163,6 +163,7 @@
                                 #{"INPUT"
                                   "SELECT"
                                   "TEXTAREA"} tag-name)
+                               (.contains (.-classList el) "cm-editor")
                                (.contains (.-classList el) "ProseMirror"))
               ;; --
 
