@@ -167,6 +167,10 @@
                                (.contains (.-classList el) "ProseMirror"))
               ;; --
 
+              ;; `target` of events originating from 10x is rewritten to the
+              ;; shadow dom container div#--re-frame-10x--
+              from-10x? (= (.-id el) "--re-frame-10x--")
+
               hit-key {:altKey   (.-altKey e)
                        :ctrlKey  (.-ctrlKey e)
                        :metaKey  (.-metaKey e)
@@ -176,7 +180,8 @@
               always-listen-keys @(rf/subscribe [(ns-keyword "-always-listen-keys")])
               always-listen?     (some #(is-key? hit-key %) always-listen-keys)]
 
-          (when (or (and (not modifier-key?)
+          (when (or (and (not from-10x?)
+                         (not modifier-key?)
                          (not entering-input?))
                     always-listen?)
             (rf/dispatch-sync [(ns-keyword "-set-key") hit-key])
