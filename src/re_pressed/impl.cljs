@@ -11,13 +11,10 @@
 
 (def max-record 25)
 
-(def modifier-keys #{16 ;; shift
-                     17 ;; ctrl
-                     18 ;; alt
-                     91 ;; windows (i.e. meta) ... TODO: apple key?
-                     })
-
-
+(def modifier-keys #{"Control"
+                     "Shift"
+                     "Alt"
+                     "Meta"})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Util
@@ -151,7 +148,7 @@
       (fn [e]
         (let [ns-keyword (->ns-keyword event-type)
 
-              e-key         (.-keyCode e)
+              e-key         (.-key e)
               modifier-key? (modifier-keys e-key)
 
               ;; --
@@ -175,7 +172,7 @@
                        :ctrlKey  (.-ctrlKey e)
                        :metaKey  (.-metaKey e)
                        :shiftKey (.-shiftKey e)
-                       :keyCode  (.-keyCode e)}
+                       :key      e-key}
 
               always-listen-keys @(rf/subscribe [(ns-keyword "-always-listen-keys")])
               always-listen?     (some #(is-key? hit-key %) always-listen-keys)]
