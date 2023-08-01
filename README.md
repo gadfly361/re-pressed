@@ -15,12 +15,10 @@ for [re-frame](https://github.com/Day8/re-frame) applications.
 [re-pressed "0.3.2"]
 ```
 
-Note: if you are upgrading re-pressed from an earlier version, there was a breaking change - all instances of `:which` should be replaced with `:keyCode`. However, the upside is re-pressed no longer relies on jQuery!
+Note: there is also a [fork of re-pressed](https://github.com/M-sleeper/re-pressed) that fixes [issue](https://github.com/gadfly361/re-pressed/issues/13)) (i.e. the `re-frame: Subscribe was called outside of a reactive context` warnings). There are trade-offs between this repo and the fork. This repo has the console warnings but gauruntees event ordering, while the fork fixes the console warnings, but doesn't gauruntee event ordering. To use the fork, you can use:
 
-And in your ns:
 ```clojure
-(ns your-ns
-  (:require [re-pressed.core :as rp]))
+[org.clojars.betontalpfa/re-pressed "0.4.0"]
 ```
 
 ![re-pressed gif not found](re-pressed.gif)
