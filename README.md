@@ -15,7 +15,7 @@ for [re-frame](https://github.com/Day8/re-frame) applications.
 [re-pressed "0.3.2"]
 ```
 
-Note: there is also a [fork of re-pressed](https://github.com/M-sleeper/re-pressed) that fixes this [issue](https://github.com/gadfly361/re-pressed/issues/13)) (i.e. the `re-frame: Subscribe was called outside of a reactive context` warnings). There are trade-offs between this repo and the fork. This repo has the console warnings but gauruntees event ordering, while the fork fixes the console warnings, but doesn't gauruntee event ordering. To use the fork, you can use:
+Note: there is also a [fork of re-pressed](https://github.com/M-sleeper/re-pressed) that fixes this [issue](https://github.com/gadfly361/re-pressed/issues/13) (i.e. the `re-frame: Subscribe was called outside of a reactive context` warnings). There are trade-offs between this repo and the fork. This repo has the console warnings but gauruntees event ordering, while the fork fixes the console warnings, but doesn't gauruntee event ordering. To use the fork, you can use:
 
 ```clojure
 [org.clojars.betontalpfa/re-pressed "0.4.0"]
