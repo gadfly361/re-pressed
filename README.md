@@ -1,4 +1,4 @@
-# re-pressed
+# re-pressed (asynch)
 
 > **Arthur**: Shut up, will you, SHUT UP!
 > **Man**:	Aha!  Now we see the violence inherent in the system!
@@ -9,10 +9,10 @@
 > - Monty Python and the Holy Grail
 
 Re-pressed is a library that handles keyboard events
-for [re-frame](https://github.com/Day8/re-frame) applications.
+for [re-frame](https://github.com/Day8/re-frame) applications. This is a fork from https://github.com/gadfly361/re-pressed. The implementation is more re-frame friendly, and has no warnings of `re-frame: Subscribe was called outside of a reactive context` (see [issue](https://github.com/gadfly361/re-pressed/issues/13)), and it uses `dispatch` instead of `dispatch-synch`.
 
 ```clojure
-[re-pressed "0.3.2"]
+[org.clojars.betontalpfa/re-pressed "0.4.0"]
 ```
 
 Note: if you are upgrading re-pressed from an earlier version, there was a breaking change - all instances of `:which` should be replaced with `:keyCode`. However, the upside is re-pressed no longer relies on jQuery!
@@ -46,7 +46,7 @@ the rules dynamically.
 
 In addition, Google Closure is able to ensure cross-browser compatibility with
 their `keyCode` attribute. Re-pressed trusts that Google Closure will do a good
-job at keeping this current and uses it under the hood.  The list of keycodes 
+job at keeping this current and uses it under the hood.  The list of keycodes
 can be found [here](https://github.com/google/closure-library/blob/master/closure/goog/events/keycodes.js#L27).
 
 # API
@@ -256,7 +256,7 @@ lein new re-frame foo +re-pressed
 - Certain browser default actions cannot be overwritten, like `ctrl+n`
   in chrome.
 - Order matters, and the first matching key combination will consume the event.  So for example, if you want to listen for both forward arrow (`{:keyCode 37}`) and control + forward arrow (`{:keyCode 37 :ctrlKey true}`), then you must put the combination before the singleton.  Similarly, control-shift-arrow must come before control-arrow, and so on.
-  
+
 ### Side note:
 
 When using re-pressed, you will need to dispatch a `::rp/set-keydown-rules`,
@@ -275,5 +275,7 @@ handle is [@gadfly361](https://twitter.com/gadfly361)).
 Copyright © 2018 Matthew Jaoudi
 
 Copyright © 2019 Arne Schlüter
+
+Copyright © 2023 Boldizsar Racz
 
 Distributed under the The MIT License (MIT).

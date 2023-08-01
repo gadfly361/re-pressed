@@ -1,9 +1,9 @@
-(defproject re-pressed "0.3.2"
+(defproject org.clojars.betontalpfa/re-pressed "0.4.0"
   :description "A keyboard events library for re-frame"
   :url "https://github.com/gadfly361/re-pressed"
   :license {:name "MIT"}
   :scm {:name "git"
-        :url  "https://github.com/gadfly361/re-pressed"}
+        :url  "https://github.com/M-sleeper/re-pressed"}
 
   :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
                  [org.clojure/clojurescript "1.10.520" :scope "provided"]
